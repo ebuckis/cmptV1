@@ -114,7 +114,7 @@ for ind, coef in enumerate(resultTab):
 			coef *= -1
 		else:
 			finalEq += " + "
-	finalEq += str(coef) + " X^" + str(ind)
+	finalEq += str(coef) + " * X^" + str(ind)
 if finalEq == "":
 	finalEq = "0"
 finalEq += " = 0"
