@@ -14,7 +14,6 @@ def print_too_high(val) :
 	sys.exit()
 
 def parse_tab(tab) :
-
 	coef = 1;
 	ind = 0
 	i = 0
@@ -41,7 +40,22 @@ def parse_tab(tab) :
 	eq[ind] += coef
 	return eq
 
-
+def get_reduced_form(resultTab) :
+	finalEq = ""
+	for ind, coef in enumerate(resultTab):
+		if coef == 0:
+			continue
+		if ind != 0:
+			if coef < 0:
+				finalEq += " - "
+				coef *= -1
+			else:
+				finalEq += " + "
+		finalEq += str(coef) + " * X^" + str(ind)
+	if finalEq == "":
+		finalEq = "0"
+	finalEq += " = 0"
+	return finalEq
 
 def any_solution():
 	print("This equation has no solution")
@@ -82,6 +96,7 @@ def resolve_second_degree(arr):
 		print(sol)
 	pass
 
+# Parsing
 splited = sys.argv[1]
 splited = splited.split("=")
 
@@ -99,31 +114,17 @@ while (i < len(eq1) or i < len(eq2)) :
 		eq2.append(0)
 	i += 1
 
+# Reduce form
 resultTab = list(map(sub, eq1, eq2))
 
 while (len(resultTab) < 3) :
 	resultTab.append(0.0)
 
-finalEq = ""
-for ind, coef in enumerate(resultTab):
-	if coef == 0:
-		continue
-	if ind != 0:
-		if coef < 0:
-			finalEq += " - "
-			coef *= -1
-		else:
-			finalEq += " + "
-	finalEq += str(coef) + " * X^" + str(ind)
-if finalEq == "":
-	finalEq = "0"
-finalEq += " = 0"
-
+finalEq = get_reduced_form(resultTab)
 
 print("Reduced form:", finalEq)
 
 # Resolution
-
 if resultTab[2] != 0:
 	print("Polynomial degree: 2")
 	resolve_second_degree(resultTab);
