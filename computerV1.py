@@ -2,7 +2,10 @@ import sys
 from operator import sub
 
 def parsing_error(strErr):
-	print("Parsing error :", strErr)
+	if (strErr == False) :
+		print("Parsing error.")
+	else :
+		print("Parsing error :", strErr)
 	sys.exit()
 
 def my_is_float(val):
@@ -22,10 +25,13 @@ def parse_tab(tab) :
 	ind = 0
 	i = 0
 	eq = [0, 0, 0]
+	check = 0
 
 	while i < len(tab) :
 
 		if tab[i] in ['+', '-']:
+			if check == 2 :
+				parsing_error(False)
 			eq[ind] += coef
 			ind = 0
 			if tab[i] == '+':
@@ -34,11 +40,20 @@ def parse_tab(tab) :
 				coef = -1
 			else :
 				parsing_error("Coefficent problem.")
+			check = 0
 		elif tab[i] == '*' :
-			i = i
+			if check != 1 :
+				parsing_error(False)
+			check = 2
 		elif my_is_float(tab[i]):
+			if check != 0 :
+				parsing_error(False)
 			coef *= float(tab[i])
+			check = 1
 		elif 'X^' in tab[i] and tab[i][0] == 'X':
+			if check != 1 and check != 2 :
+				parsing_error(False)
+			
 			if my_is_float(tab[i].replace("X^", "")) == False:
 				parsing_error("Exposant problem.")
 			exp = int(float(tab[i].replace("X^", "")))
@@ -47,10 +62,13 @@ def parse_tab(tab) :
 			else:
 				print_too_high(exp)
 				return False
+			check = 3
 		else :
 			parsing_error("Number Problem.")
 		i += 1
 	eq[ind] += coef
+	if (check == 0 or check == 2) :
+		parsing_error("Not well formated")
 	return eq
 
 def get_reduced_form(resultTab) :
