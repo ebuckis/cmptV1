@@ -1,6 +1,10 @@
 import sys
 from operator import sub
 
+def parsing_error(strErr):
+	print("Parsing error :", strErr)
+	sys.exit()
+
 def my_is_float(val):
 	try:
 		float(val)
@@ -20,6 +24,7 @@ def parse_tab(tab) :
 	eq = [0, 0, 0]
 
 	while i < len(tab) :
+
 		if tab[i] in ['+', '-']:
 			eq[ind] += coef
 			ind = 0
@@ -27,15 +32,23 @@ def parse_tab(tab) :
 				coef = 1
 			elif tab[i] == '-':
 				coef = -1
+			else :
+				parsing_error("Coefficent problem.")
+		elif tab[i] == '*' :
+			i = i
 		elif my_is_float(tab[i]):
 			coef *= float(tab[i])
-		elif 'X^' in tab[i]:
+		elif 'X^' in tab[i] and tab[i][0] == 'X':
+			if my_is_float(tab[i].replace("X^", "")) == False:
+				parsing_error("Exposant problem.")
 			exp = int(float(tab[i].replace("X^", "")))
 			if exp in [0, 1, 2]:
 				ind = exp
 			else:
 				print_too_high(exp)
-				return False 
+				return False
+		else :
+			parsing_error("Number Problem.")
 		i += 1
 	eq[ind] += coef
 	return eq
@@ -99,6 +112,8 @@ def resolve_second_degree(arr):
 # Parsing
 splited = sys.argv[1]
 splited = splited.split("=")
+if len(splited) != 2 :
+	parsing_error("Not an equation.")
 
 tab1 = splited[0].split()
 tab2 = splited[1].split()
