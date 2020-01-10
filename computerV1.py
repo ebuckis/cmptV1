@@ -20,6 +20,11 @@ def print_too_high(val) :
 	print("The polynomial degree is stricly greater than 2, I can't solve.")
 	sys.exit()
 
+def print_too_low(val) :
+	print("Polynomial degree:", val)
+	print("The polynomial degree is negative, I can't solve.")
+	sys.exit()
+
 def parse_tab(tab) :
 	coef = 1;
 	ind = 0
@@ -57,10 +62,14 @@ def parse_tab(tab) :
 			if my_is_float(tab[i].replace("X^", "")) == False:
 				parsing_error("Exposant problem.")
 			exp = int(float(tab[i].replace("X^", "")))
-			if exp in [0, 1, 2]:
+			
+			if exp >= 0 and exp <= 2:
 				ind = exp
-			else:
+			elif exp > 2:
 				print_too_high(exp)
+				return False
+			elif exp < 0:
+				print_too_low(exp)
 				return False
 			check = 3
 		else :
@@ -81,7 +90,8 @@ def get_reduced_form(resultTab) :
 				finalEq += " - "
 				coef *= -1
 			else:
-				finalEq += " + "
+				if finalEq != "":
+					finalEq += " + "
 		finalEq += str(coef) + " * X^" + str(ind)
 	if finalEq == "":
 		finalEq = "0"
@@ -114,10 +124,32 @@ def resolve_second_degree(arr):
 	discr = (arr[1] * arr[1]) - (4 * arr[0] * arr[2])
 	if (discr < 0) :
 		print("The discriminent is negative so :")
-		any_solution()
+		discr *= -1
+
+		#(-b - ir)/2a
+		sol = (str)(-arr[1] / (2 * arr[2]))
+		if (arr[2] < 0) :
+			sol += " + " + (str)(-1 * my_sqrt(discr) / (2 * arr[2]))
+		else :
+			sol += " - " + (str)(my_sqrt(discr) / (2 * arr[2]))
+		sol += "i"
+		print(sol)
+
+		#(-b + ir)/2a
+		sol = (str)(-arr[1] / (2 * arr[2]))
+		if (arr[2] < 0) :
+			sol += " - " + (str)(-1 * my_sqrt(discr) / (2 * arr[2]))
+		else :
+			sol += " + " + (str)(my_sqrt(discr) / (2 * arr[2]))
+		sol += "i"
+		print(sol)
+
 	elif (discr == 0) :
-		sol = -arr[1] / (2 * arr[0])
-		print("The discriminent if equal to 0, the solution is:")
+		if (arr[0] == 0) :
+			sol = 0
+		else :
+			sol = -arr[1] / (2 * arr[0])
+		print("The discriminent is equal to 0, the solution is:")
 		print(sol)
 	else :
 		print("Discriminant is strictly positive, the two solutions are:")
@@ -127,7 +159,12 @@ def resolve_second_degree(arr):
 		print(sol)
 	pass
 
+
+
 # Parsing
+
+if len(sys.argv) != 2 :
+	parsing_error("Not the right number of argument.")
 splited = sys.argv[1]
 splited = splited.split("=")
 if len(splited) != 2 :
